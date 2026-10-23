@@ -65,8 +65,9 @@ like the remote; **R G Y B** are the coloured buttons and **Esc** is Back.
 - Made for a 2021 Samsung Q70A (Tizen 6). Other recent Samsung TVs will
   probably work too, but haven't been tried.
 
-## Credits
+## License
 
-Wallpaper photos are from [Unsplash](https://unsplash.com/license), selected by
-the [CleanFrame](https://github.com/nthnclrk/CleanFrame) project. See
-[CREDITS.txt](src/img/wallpapers/CREDITS.txt).
+The code is [MIT](LICENSE). The wallpaper photos are not covered by it: they
+are from [Unsplash](https://unsplash.com/license), under the Unsplash License,
+selected by the [CleanFrame](https://github.com/nthnclrk/CleanFrame) project.
+See [CREDITS.txt](src/img/wallpapers/CREDITS.txt).
