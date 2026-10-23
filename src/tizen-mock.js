@@ -38,6 +38,11 @@
 
   var alwaysKnown = { 'org.tizen.tv-viewer': 1, 'com.samsung.tv.csfs': 1 };
   var source = { type: 'HDMI', number: 1 };
+  var running = null; // the last app "opened", as if it were still in the background
+
+  function isKnown(id) {
+    return alwaysKnown[id] || apps.some(function (a) { return a.id === id; });
+  }
 
   function later(fn, arg) {
     setTimeout(function () { if (fn) fn(arg); }, 120);
@@ -56,13 +61,30 @@
   }
 
   window.tizen = {
+    ApplicationControl: function (operation, uri, mime, category, data) {
+      this.operation = operation;
+      this.uri = uri;
+      this.data = data || [];
+    },
+    ApplicationControlData: function (key, value) {
+      this.key = key;
+      this.value = value;
+    },
     application: {
       getAppsInfo: function (ok) { later(ok, apps); },
+      getAppsContext: function (ok) { later(ok, running ? [{ appId: running }] : []); },
       getCurrentApplication: function () { return { appInfo: { id: 'QuickHome1.Launcher' } }; },
       launch: function (id, ok, err) {
-        var known = alwaysKnown[id] || apps.some(function (a) { return a.id === id; });
-        if (!known) { later(err, { name: 'NotFoundError' }); return; }
+        if (!isKnown(id)) { later(err, { name: 'NotFoundError' }); return; }
+        running = id;
         announce('aprirebbe ' + id + (id === 'org.tizen.tv-viewer' ? ' (sorgente ' + source.type + ')' : ''));
+        later(ok);
+      },
+      launchAppControl: function (control, id, ok, err) {
+        if (!isKnown(id)) { later(err, { name: 'NotFoundError' }); return; }
+        running = id;
+        var payload = control.data.length ? ' ' + control.data[0].key + '=' + control.data[0].value[0] : '';
+        announce('aprirebbe ' + id + ' ' + control.operation.split('/').pop() + (control.uri ? ' ' + control.uri : '') + payload);
         later(ok);
       }
     },

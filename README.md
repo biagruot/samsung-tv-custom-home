@@ -4,8 +4,8 @@ A clean, fast home screen for Samsung Smart TVs.
 
 Samsung's Home bar is crowded with promotions and apps you never open.
 Quick Home is a simpler screen to use instead: four big tiles for what you
-actually watch (**live TV, Stremio, YouTube and YouTube Music**), with every
-other app one button away.
+actually watch (**live TV, Stremio, YouTube and YouTube Music**), a row of
+ambient scenes, and every other app one button away.
 
 ![Quick Home](docs/screenshots/home.jpg)
 
@@ -13,11 +13,12 @@ other app one button away.
 
 - **Opens on live TV.** TV channels is always selected, so pressing OK puts you straight on your channels.
 - **One press per app.** Number keys 1–4 open a tile directly.
+- **Ambient scenes.** Fireplace, rain, aquarium and sea open YouTube straight on a long video. Best with YouTube Premium, so no ads.
 - **All your apps.** The red button shows every installed app in a grid.
 - **Your look.** The green button switches between 11 wallpapers, photos included.
-- **Light and private.** No ads, no tracking, no internet needed.
+- **Light and private.** No ads, no tracking; the home screen itself works offline.
 
-| Photo wallpapers | All apps |
+| Photo wallpapers and scenes | All apps |
 | --- | --- |
 | ![Photo wallpaper](docs/screenshots/wallpaper.jpg) | ![All apps](docs/screenshots/all-apps.jpg) |
 
@@ -25,8 +26,9 @@ other app one button away.
 
 | Button | Action |
 | --- | --- |
-| ◀ ▶ and OK | Move and open |
+| ◀ ▶ ▲ ▼ and OK | Move and open |
 | 1 – 4 | Open that tile |
+| 5 – 8 | Open that scene |
 | 🔴 Red | All apps |
 | 🟢 Green | Next wallpaper |
 | 🟡 Yellow | Navigation sounds on/off |
@@ -51,7 +53,7 @@ You need a Windows PC on the same network as the TV and a free Samsung account.
 
 ## Try it in your browser
 
-Open `src/index.html` in Chrome or Edge. The arrow keys, Enter and 1–4 work
+Open `src/index.html` in Chrome or Edge. The arrow keys, Enter and 1–8 work
 like the remote; **R G Y B** are the coloured buttons and **Esc** is Back.
 
 ## Good to know
@@ -60,6 +62,8 @@ like the remote; **R G Y B** are the coloured buttons and **Esc** is Back.
   to replace it, so Quick Home is one press away instead (Home, then OK).
 - **YouTube Music opens in YouTube**, because Samsung TVs have no separate
   YouTube Music app.
+- **Scenes need YouTube.** Each one is just a YouTube video id in
+  `src/index.html` (`data-video`), so you can swap in your own favourites.
 - **The on-screen text is in Italian.** All of it lives in `src/index.html`
   and `src/app.js` if you want another language.
 - Made for a 2021 Samsung Q70A (Tizen 6). Other recent Samsung TVs will

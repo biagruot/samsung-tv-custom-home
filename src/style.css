@@ -60,7 +60,7 @@ body.wp-photo {
   position: absolute;
   left: 0;
   right: 0;
-  top: 360px;
+  top: 330px;
   text-align: center;
   white-space: nowrap;
   font-size: 0;
@@ -81,13 +81,15 @@ body.wp-photo {
   cursor: pointer;
 }
 
-.tile.is-focused {
+.tile.is-focused,
+.scene.is-focused {
   transform: scale(1.07);
 }
 
 /* Unfocused tiles are dimmed by a dark layer, not transparency, so a photo
    wallpaper never shows through them. */
-.tile::before {
+.tile::before,
+.scene::before {
   content: "";
   position: absolute;
   left: 0;
@@ -95,17 +97,19 @@ body.wp-photo {
   right: 0;
   bottom: 0;
   z-index: 1;
-  border-radius: 28px;
+  border-radius: inherit;
   background: #000;
   opacity: 0.4;
   transition: opacity 0.14s ease-out;
 }
 
-.tile.is-focused::before {
+.tile.is-focused::before,
+.scene.is-focused::before {
   opacity: 0;
 }
 
-.tile.is-focused::after {
+.tile.is-focused::after,
+.scene.is-focused::after {
   content: "";
   position: absolute;
   left: -9px;
@@ -116,10 +120,67 @@ body.wp-photo {
   border-radius: 37px;
 }
 
+.scene.is-focused::after {
+  border-radius: 31px;
+}
+
 .tile-tv      { width: 520px; background: #1d4ed8; background-image: linear-gradient(160deg, #2b63f0, #1739a8); }
 .tile-stremio { background: #4b33a8; background-image: linear-gradient(160deg, #6a4bd8, #3a2584); }
 .tile-youtube { background: #d7261e; background-image: linear-gradient(160deg, #ef3a2f, #a8140e); }
 .tile-ytmusic { background: #1b1416; background-image: linear-gradient(160deg, #2c1d21, #120c0e); }
+
+/* ---- scenes: a lower row of small tiles that open YouTube on a video ---- */
+
+.scenes {
+  top: 800px;
+}
+
+.scene {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  width: 340px;
+  height: 104px;
+  margin: 0 14px;
+  border-radius: 22px;
+  text-align: left;
+  white-space: normal;
+  transition: transform 0.14s ease-out;
+  will-change: transform;
+  cursor: pointer;
+}
+
+.scene-fire { background: #3d1c0e; background-image: linear-gradient(160deg, #5a2a12, #2a130a); }
+.scene-rain { background: #18243a; background-image: linear-gradient(160deg, #24365a, #121b2c); }
+.scene-reef { background: #0f3038; background-image: linear-gradient(160deg, #15505a, #0a2228); }
+.scene-sea  { background: #10304d; background-image: linear-gradient(160deg, #1a4a78, #0b2036); }
+
+.scene-icon {
+  position: absolute;
+  left: 26px;
+  top: 28px;
+  width: 48px;
+  height: 48px;
+}
+
+.scene-label {
+  position: absolute;
+  left: 88px;
+  top: 32px;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+}
+
+.scene .num {
+  right: 22px;
+  top: 30px;
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  border-radius: 22px;
+  font-size: 22px;
+}
 
 .icon {
   position: absolute;
@@ -198,17 +259,16 @@ body.wp-photo {
 .key-yellow { background: #e7c13a; }
 .key-blue   { background: #3f7fe0; }
 
+/* Top right, level with the clock, so it never covers the tiles. */
 .toast {
   position: absolute;
-  left: 50%;
-  bottom: 150px;
-  max-width: 1400px;
+  right: 120px;
+  top: 104px;
+  max-width: 1100px;
   padding: 22px 36px;
   border-radius: 18px;
   background: #2a303c;
   font-size: 32px;
-  white-space: nowrap;
-  transform: translateX(-50%);
   opacity: 0;
   transition: opacity 0.2s;
 }

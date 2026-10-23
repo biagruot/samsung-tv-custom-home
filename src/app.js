@@ -1,5 +1,6 @@
 /* Quick Home: a four-tile home screen for Samsung Tizen TVs.
-   TV channels is tile 1 and has focus every time the screen opens.
+   TV channels is tile 1 and has focus every time the screen opens. Below the
+   tiles, scenes 5-8 open the YouTube app straight on a long video.
    Colour keys: RED all apps, GREEN wallpaper, YELLOW sound, BLUE Samsung Home.
    Plain ES5 so it runs on older TV browsers. */
 (function () {
@@ -14,7 +15,7 @@
 
   // Remote key codes. Digits and colour keys only arrive after registerKeys().
   var KEY = {
-    OK: 13, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, DIGIT_1: 49,
+    OK: 13, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, DIGIT_0: 48, DIGIT_1: 49,
     RED: 403, GREEN: 404, YELLOW: 405, BLUE: 406, BACK: 10009
   };
 
@@ -22,7 +23,8 @@
   var STORE = {
     appIds: 'quickhome.appIds',
     wallpaper: 'quickhome.wallpaper',
-    sound: 'quickhome.sound'
+    sound: 'quickhome.sound',
+    videoWay: 'quickhome.videoWay'
   };
 
   // Gradient wallpapers are CSS only, so switching to one is instant and
@@ -52,6 +54,17 @@
     ytmusic: { label: 'YouTube Music', ids: [], name: /^youtube music/i, fallback: 'youtube' }
   };
 
+  // Samsung documents no way to open YouTube on a given video, so these are
+  // the candidates. PAYLOAD is how Samsung's own Home previews hand an item
+  // to an app; DIAL is how the YouTube phone app casts to the TV. The 0 key
+  // switches between them until we know which one this TV accepts.
+  var VIDEO_WAYS = [
+    { name: 'PAYLOAD', operation: 'http://tizen.org/appcontrol/operation/default', payload: true },
+    { name: 'PAYLOAD + resume', operation: 'http://samsung.com/appcontrol/operation/eden_resume', payload: true },
+    { name: 'URL', operation: 'http://tizen.org/appcontrol/operation/view', url: true },
+    { name: 'DIAL', dial: true }
+  ];
+
   var stage = document.getElementById('stage');
   var clockEl = document.getElementById('clock');
   var dateEl = document.getElementById('date');
@@ -60,9 +73,13 @@
   var appsGrid = document.getElementById('appsGrid');
   var appsEmpty = document.getElementById('appsEmpty');
   var tiles = [].slice.call(document.querySelectorAll('.tile'));
+  var scenes = [].slice.call(document.querySelectorAll('.scene'));
+  var items = tiles.concat(scenes); // in number-key order: 1-4 tiles, 5-8 scenes
+  var rows = [tiles, scenes].filter(function (row) { return row.length; });
 
   var mode = 'home';          // 'home' or 'apps'
-  var focused = 0;            // focused tile on the home screen
+  var focusRow = 0;           // home screen: 0 tiles, 1 scenes
+  var focusCol = rows.map(function () { return 0; }); // focused item in each row
   var gridFocus = 0;          // focused cell in the all-apps grid
   var launching = false;
   var appIds = load(STORE.appIds, {}); // key -> app id, or null when the TV has no such app
@@ -75,6 +92,7 @@
   var wallpaper = load(STORE.wallpaper, 0);
   var soundOn = !!load(STORE.sound, true);
   var audioCtx = null;
+  var videoWay = load(STORE.videoWay, 0);
 
   // ---- keys ----
 
@@ -85,11 +103,15 @@
 
   function handleHomeKey(e) {
     var k = e.keyCode;
-    var digit = k - KEY.DIGIT_1;
-    if (k === KEY.LEFT) { setFocus(focused - 1); soundMove(); }
-    else if (k === KEY.RIGHT) { setFocus(focused + 1); soundMove(); }
-    else if (k === KEY.OK) open(focused);
-    else if (digit >= 0 && digit < tiles.length) { setFocus(digit); open(digit); }
+    var number = k - KEY.DIGIT_1; // key 1 is items[0]
+    var col = focusCol[focusRow];
+    if (k === KEY.LEFT) { setFocus(focusRow, col - 1); soundMove(); }
+    else if (k === KEY.RIGHT) { setFocus(focusRow, col + 1); soundMove(); }
+    else if (k === KEY.UP) { setFocus(focusRow - 1); soundMove(); }
+    else if (k === KEY.DOWN) { setFocus(focusRow + 1); soundMove(); }
+    else if (k === KEY.OK) open(rows[focusRow][col]);
+    else if (number >= 0 && number < items.length) { focusOn(items[number]); open(items[number]); }
+    else if (k === KEY.DIGIT_0) nextVideoWay();
     else if (k === KEY.RED) { openAllApps(); soundMove(); }
     else if (k === KEY.GREEN) cycleWallpaper();
     else if (k === KEY.YELLOW) toggleSound();
@@ -115,33 +137,47 @@
 
   function registerKeys() {
     try {
-      // '1'-'4' open tiles; the four colour keys drive the extra features.
-      tizen.tvinputdevice.registerKeyBatch(
-        ['1', '2', '3', '4', 'ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue']);
+      // '1'-'8' open tiles and scenes, '0' switches the video way, and the
+      // four colour keys drive the extra features.
+      var keys = ['0', 'ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue'];
+      for (var i = 1; i <= items.length && i <= 9; i++) keys.push(String(i));
+      tizen.tvinputdevice.registerKeyBatch(keys);
     } catch (e) { /* arrows and OK still work */ }
   }
 
-  // ---- home tiles ----
+  // ---- home tiles and scenes ----
 
-  function setFocus(index) {
-    tiles[focused].classList.remove('is-focused');
-    focused = Math.max(0, Math.min(tiles.length - 1, index));
-    tiles[focused].classList.add('is-focused');
+  // Moving to another row lands on the item last focused there.
+  function setFocus(row, col) {
+    row = Math.max(0, Math.min(rows.length - 1, row));
+    if (col === undefined) col = focusCol[row];
+    rows[focusRow][focusCol[focusRow]].classList.remove('is-focused');
+    focusRow = row;
+    focusCol[row] = Math.max(0, Math.min(rows[row].length - 1, col));
+    rows[row][focusCol[row]].classList.add('is-focused');
   }
 
-  tiles.forEach(function (tile, i) {
-    tile.addEventListener('mouseenter', function () { if (mode === 'home') setFocus(i); });
-    tile.addEventListener('click', function () { if (mode === 'home') { setFocus(i); open(i); } });
+  function focusOn(item) {
+    rows.forEach(function (row, r) {
+      if (row.indexOf(item) >= 0) setFocus(r, row.indexOf(item));
+    });
+  }
+
+  items.forEach(function (item) {
+    item.addEventListener('mouseenter', function () { if (mode === 'home') focusOn(item); });
+    item.addEventListener('click', function () { if (mode === 'home') { focusOn(item); open(item); } });
   });
 
-  function open(index) {
+  function open(item) {
     if (launching) return; // a held OK button repeats; open once
     launching = true;
     soundOpen();
     setTimeout(function () { launching = false; }, LAUNCH_LOCK_MS);
 
-    var key = tiles[index].getAttribute('data-open');
-    if (key === 'tv') openLiveTv();
+    var key = item.getAttribute('data-open');
+    var video = item.getAttribute('data-video');
+    if (video) openVideo(video);
+    else if (key === 'tv') openLiveTv();
     else openApp(key, false);
   }
 
@@ -207,6 +243,58 @@
 
   function noHome(err) {
     fail('Impossibile aprire la Home Samsung (' + err.name + ').');
+  }
+
+  // ---- scenes: YouTube straight on a video ----
+
+  function openVideo(videoId) {
+    var way = VIDEO_WAYS[videoWay] || VIDEO_WAYS[0];
+    // If YouTube won't take the video, open it anyway rather than nothing.
+    var fallback = function () { openApp('youtube', false); };
+    try {
+      if (way.dial) { dialYouTube(videoId, fallback); return; }
+      var data = way.payload
+        ? [new tizen.ApplicationControlData('PAYLOAD', [JSON.stringify({ values: 'v=' + videoId })])]
+        : null;
+      var uri = way.url ? 'https://www.youtube.com/watch?v=' + videoId : null;
+      tizen.application.launchAppControl(
+        new tizen.ApplicationControl(way.operation, uri, null, null, data),
+        appIds.youtube || APPS.youtube.ids[0], null, fallback);
+    } catch (e) {
+      fallback();
+    }
+  }
+
+  // The TV's DIAL server sends no CORS headers, so a blocked reply is normal
+  // here; only a clear refusal counts as failure.
+  function dialYouTube(videoId, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://127.0.0.1:8080/ws/apps/YouTube');
+    xhr.setRequestHeader('Content-Type', 'text/plain');
+    xhr.onload = function () { if (xhr.status >= 400) onError(); };
+    xhr.send('v=' + videoId);
+  }
+
+  // Temporary, to find the way this TV accepts (docs/internal.md): 0 picks
+  // the next one and says whether YouTube is already running, since some
+  // ways may only work when it isn't.
+  function nextVideoWay() {
+    videoWay = (videoWay + 1) % VIDEO_WAYS.length;
+    save(STORE.videoWay, videoWay);
+    youtubeRunning(function (running) {
+      toast('Metodo video ' + (videoWay + 1) + '/' + VIDEO_WAYS.length + ': ' + VIDEO_WAYS[videoWay].name +
+        ' \u00b7 YouTube aperto: ' + (running === null ? '?' : running ? 's\u00ec' : 'no'));
+    });
+  }
+
+  function youtubeRunning(then) {
+    try {
+      tizen.application.getAppsContext(function (list) {
+        then(list.some(function (c) { return c.appId === appIds.youtube; }));
+      }, function () { then(null); });
+    } catch (e) {
+      then(null);
+    }
   }
 
   function fail(message) {
@@ -457,7 +545,7 @@
     if (document.hidden) return;
     launching = false;
     closeAllApps();
-    setFocus(0);
+    setFocus(0, 0);
     tick();
   });
 
