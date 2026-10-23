@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://quickhome.local/launcher" version="1.0.0" viewmodes="maximized">
+    <!-- The package part of the id must be exactly 10 letters or digits. Keep it stable:
+         reinstalling under a new id makes the TV treat it as a different app. -->
+    <tizen:application id="QuickHome1.Launcher" package="QuickHome1" required_version="3.0"/>
+    <content src="index.html"/>
+    <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
+    <icon src="icon.png"/>
+    <name>Quick Home</name>
+
+    <!-- List and open installed apps. -->
+    <tizen:privilege name="http://tizen.org/privilege/application.info"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <!-- Number keys 1-4 on the remote. -->
+    <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+    <!-- Switch the picture to the TV tuner before opening live TV. -->
+    <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
+
+    <tizen:profile name="tv-samsung"/>
+    <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"/>
+    <!-- Lets older TVs (2016-2018) load the app in the background at power-on. Newer TVs ignore it. -->
+    <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true"/>
+</widget>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>Quick Home</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- The tiles are plain markup so the screen paints before any script runs. -->
+<main class="stage" id="stage">
+  <header class="top">
+    <div class="clock" id="clock"></div>
+    <div class="date" id="date"></div>
+  </header>
+
+  <section class="row">
+    <div class="tile tile-tv is-focused" data-open="tv">
+      <span class="num">1</span>
+      <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="5" y="10" width="54" height="36" rx="6" fill="none" stroke="#fff" stroke-width="5"/>
+        <path d="M22 55h20" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <span class="label">TV channels</span>
+      <span class="sub" data-sub="tv">Live TV</span>
+    </div>
+
+    <div class="tile tile-stremio" data-open="stremio">
+      <span class="num">2</span>
+      <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="14" y="14" width="36" height="36" rx="6" transform="rotate(45 32 32)" fill="#fff"/>
+        <path d="M27 22.5l13 9.5-13 9.5z" fill="#4b33a8"/>
+      </svg>
+      <span class="label">Stremio</span>
+      <span class="sub" data-sub="stremio"></span>
+    </div>
+
+    <div class="tile tile-youtube" data-open="youtube">
+      <span class="num">3</span>
+      <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="4" y="13" width="56" height="38" rx="11" fill="#fff"/>
+        <path d="M27 23l16 9-16 9z" fill="#d7261e"/>
+      </svg>
+      <span class="label">YouTube</span>
+      <span class="sub" data-sub="youtube"></span>
+    </div>
+
+    <div class="tile tile-ytmusic" data-open="ytmusic">
+      <span class="num">4</span>
+      <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="27" fill="#ff1a3c"/>
+        <circle cx="32" cy="32" r="15" fill="none" stroke="#fff" stroke-width="3"/>
+        <path d="M28 25l11 7-11 7z" fill="#fff"/>
+      </svg>
+      <span class="label">YouTube Music</span>
+      <span class="sub" data-sub="ytmusic"></span>
+    </div>
+  </section>
+
+  <footer class="hint">
+    <span>&#9664; &#9654; move</span>
+    <span>OK open</span>
+    <span>1&ndash;4 direct</span>
+    <span><b class="key key-red"></b> All apps</span>
+    <span><b class="key key-green"></b> Wallpaper</span>
+    <span><b class="key key-yellow"></b> Sound</span>
+    <span><b class="key key-blue"></b> Samsung Home</span>
+  </footer>
+  <div class="toast" id="toast"></div>
+</main>
+
+<!-- All installed apps. Hidden until the red button opens it. -->
+<section class="apps-screen" id="appsScreen">
+  <header class="apps-head">
+    <span>All apps</span>
+    <span class="apps-hint">&#9664; &#9654; &#9650; &#9660; move &nbsp;&middot;&nbsp; OK open &nbsp;&middot;&nbsp; Back close</span>
+  </header>
+  <div class="apps-grid" id="appsGrid"></div>
+  <div class="apps-empty" id="appsEmpty">Reading installed apps&hellip;</div>
+</section>
+
+<!-- Does nothing on the TV; stands in for the TV's APIs when previewed on a PC. -->
+<script src="tizen-mock.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

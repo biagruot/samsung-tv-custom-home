@@ -1,0 +1,19 @@
+Photo wallpapers bundled with Quick Home
+========================================
+
+All six photos are from Unsplash and are used under the Unsplash License
+(https://unsplash.com/license), which permits free use, including copying,
+modifying and redistributing. They were downscaled to 1920x1080 for the TV.
+Photographers keep their rights; please keep this credit file with the app.
+
+File            Title           Photographer          Source
+----            -----           ------------          ------
+night.jpg       Desert stars    Mohammad Alizade      https://unsplash.com/photos/4wzRuAb-KWs
+misty.jpg       Misty coast     Ganapathy Kumar       https://unsplash.com/photos/n4VMQZIkgDg
+forest.jpg      Forest mist     Dejan Zakic           https://unsplash.com/photos/rr2EF3J5F2Y
+cove.jpg        Quiet cove      Joshua Wordel         https://unsplash.com/photos/1L_5PT7EKzU
+peaks.jpg       Blue peaks      John Rodenn Castillo  https://unsplash.com/photos/rQqWOHZ96OM
+ridge.jpg       Sunlit ridges   Cristina Gottardi     https://unsplash.com/photos/wndpWTiDuT0
+
+Wallpaper selection originally curated by the CleanFrame project
+(https://github.com/nthnclrk/CleanFrame), which sourced them from Unsplash.

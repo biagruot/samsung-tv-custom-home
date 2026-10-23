@@ -1,0 +1,295 @@
+/* Written for the TV's older Chromium (no gap, inset or aspect-ratio).
+   Only transform and opacity animate, so focus changes stay smooth. */
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: "SamsungOne", "SamsungOneUI", "TizenSans", "Segoe UI", Roboto, Arial, sans-serif;
+  color: #f2f4f8;
+  background: #0b0d12;
+}
+
+/* Wallpapers: CSS only, so switching costs nothing and loads nothing. */
+body.wp-midnight { background: radial-gradient(120% 120% at 20% 0%, #161a24 0%, #0b0d12 60%); }
+body.wp-ocean    { background: radial-gradient(130% 130% at 85% 10%, #10395c 0%, #081019 65%); }
+body.wp-aurora   { background: radial-gradient(130% 130% at 15% 100%, #0d3b36 0%, #07140f 60%); }
+body.wp-ember    { background: radial-gradient(130% 130% at 85% 100%, #3a1a12 0%, #140a08 62%); }
+body.wp-plum     { background: radial-gradient(130% 130% at 50% -10%, #2c1540 0%, #0c0810 62%); }
+
+/* Photo wallpapers: the image is set inline (with a dark scrim) from app.js. */
+body.wp-photo {
+  background-color: #06080c;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: 0 0;
+}
+
+.top {
+  position: absolute;
+  left: 120px;
+  top: 90px;
+}
+
+.clock {
+  font-size: 104px;
+  font-weight: 300;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.date {
+  margin-top: 14px;
+  font-size: 34px;
+  color: #8f98a8;
+}
+
+.row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 360px;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 0;
+}
+
+.tile {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  width: 340px;
+  height: 400px;
+  margin: 0 20px;
+  border-radius: 28px;
+  text-align: left;
+  white-space: normal;
+  opacity: 0.62;
+  transition: transform 0.14s ease-out, opacity 0.14s ease-out;
+  will-change: transform;
+  cursor: pointer;
+}
+
+.tile.is-focused {
+  opacity: 1;
+  transform: scale(1.07);
+}
+
+.tile.is-focused::after {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: -9px;
+  right: -9px;
+  bottom: -9px;
+  border: 5px solid #fff;
+  border-radius: 37px;
+}
+
+.tile-tv      { width: 520px; background: #1d4ed8; background-image: linear-gradient(160deg, #2b63f0, #1739a8); }
+.tile-stremio { background: #4b33a8; background-image: linear-gradient(160deg, #6a4bd8, #3a2584); }
+.tile-youtube { background: #d7261e; background-image: linear-gradient(160deg, #ef3a2f, #a8140e); }
+.tile-ytmusic { background: #1b1416; background-image: linear-gradient(160deg, #2c1d21, #120c0e); }
+
+.icon {
+  position: absolute;
+  left: 40px;
+  top: 44px;
+  width: 120px;
+  height: 120px;
+}
+
+.tile-tv .icon {
+  width: 150px;
+  height: 150px;
+}
+
+.num {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.25);
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.label {
+  position: absolute;
+  left: 40px;
+  right: 30px;
+  bottom: 84px;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.sub {
+  position: absolute;
+  left: 40px;
+  right: 30px;
+  bottom: 40px;
+  font-size: 27px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+  text-align: center;
+  font-size: 26px;
+  color: #828b9d;
+}
+
+.hint span {
+  margin: 0 22px;
+  white-space: nowrap;
+}
+
+/* Little coloured dots that match the remote's A/B/C/D buttons. */
+.key {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+
+.key-red    { background: #e4493b; }
+.key-green  { background: #52b256; }
+.key-yellow { background: #e7c13a; }
+.key-blue   { background: #3f7fe0; }
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 150px;
+  max-width: 1400px;
+  padding: 22px 36px;
+  border-radius: 18px;
+  background: #2a303c;
+  font-size: 32px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.toast.is-shown {
+  opacity: 1;
+}
+
+/* ---- all-apps screen ---- */
+
+.apps-screen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: 0 0;
+  background: #0a0c10;
+  display: none;
+}
+
+.apps-screen.is-open {
+  display: block;
+}
+
+.apps-head {
+  position: absolute;
+  left: 120px;
+  right: 120px;
+  top: 70px;
+  font-size: 56px;
+  font-weight: 700;
+}
+
+.apps-hint {
+  float: right;
+  margin-top: 28px;
+  font-size: 26px;
+  font-weight: 400;
+  color: #828b9d;
+}
+
+.apps-grid {
+  position: absolute;
+  left: 110px;
+  right: 110px;
+  top: 190px;
+  bottom: 70px;
+  overflow-y: auto;
+  font-size: 0;
+}
+
+.app-cell {
+  display: inline-block;
+  vertical-align: top;
+  width: 304px;
+  height: 150px;
+  margin: 10px;
+  padding: 24px;
+  border-radius: 18px;
+  background: #171b24;
+  box-sizing: border-box;
+  white-space: normal;
+  cursor: pointer;
+}
+
+.app-cell.is-focused {
+  background: #273043;
+  box-shadow: 0 0 0 4px #fff inset;
+}
+
+.app-badge {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+  border-radius: 14px;
+  background: #3a63c0;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.app-name {
+  display: block;
+  font-size: 28px;
+  line-height: 1.15;
+  overflow: hidden;
+  max-height: 34px;
+}
+
+.apps-empty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 480px;
+  text-align: center;
+  font-size: 34px;
+  color: #828b9d;
+  display: none;
+}
