@@ -29,4 +29,4 @@ finally {
     $zip.Dispose()
 }
 
-"Built $out"
+"Built {0} ({1:N0} KB)" -f $out, ((Get-Item $out).Length / 1KB)

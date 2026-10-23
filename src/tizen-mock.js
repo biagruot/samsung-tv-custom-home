@@ -6,6 +6,19 @@
   'use strict';
   if (window.tizen) return;
 
+  // Keyboard stand-ins for remote keys a PC doesn't have:
+  // R G Y B are the colour keys, Esc or Backspace is Back.
+  var remoteKeys = { 82: 403, 71: 404, 89: 405, 66: 406, 27: 10009, 8: 10009 };
+  window.addEventListener('keydown', function (e) {
+    var code = remoteKeys[e.keyCode];
+    if (!code) return;
+    e.stopPropagation();
+    e.preventDefault();
+    var remote = new Event('keydown', { bubbles: true, cancelable: true });
+    remote.keyCode = code;
+    document.dispatchEvent(remote);
+  }, true);
+
   // A plausible set of installed apps, so the all-apps grid looks real.
   var apps = [
     { id: '9Ur5IzDKqV.TizenYouTube', name: 'YouTube', show: true },

@@ -7,11 +7,23 @@
 
   var TV_VIEWER_APP = 'org.tizen.tv-viewer';
   var SAMSUNG_HOME_APP = 'com.samsung.tv.csfs';
-  var CACHE_KEY = 'quickhome.appIds';
   var LIST_TIMEOUT_MS = 8000;
   var TUNER_TIMEOUT_MS = 2000;
   var LAUNCH_LOCK_MS = 2000;
   var GRID_COLS = 5;
+
+  // Remote key codes. Digits and colour keys only arrive after registerKeys().
+  var KEY = {
+    OK: 13, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, DIGIT_1: 49,
+    RED: 403, GREEN: 404, YELLOW: 405, BLUE: 406, BACK: 10009
+  };
+
+  // Everything remembered on the TV, as JSON in localStorage.
+  var STORE = {
+    appIds: 'quickhome.appIds',
+    wallpaper: 'quickhome.wallpaper',
+    sound: 'quickhome.sound'
+  };
 
   // Gradient wallpapers are CSS only, so switching to one is instant and
   // downloads nothing. Photo wallpapers are bundled JPEGs (Unsplash, see
@@ -53,15 +65,15 @@
   var focused = 0;            // focused tile on the home screen
   var gridFocus = 0;          // focused cell in the all-apps grid
   var launching = false;
-  var appIds = loadCache();   // key -> app id, or null when the TV has no such app
+  var appIds = load(STORE.appIds, {}); // key -> app id, or null when the TV has no such app
   var allApps = [];           // every launchable app, for the grid
   var listing = false;
   var afterList = [];
   var tickTimer = null;
   var toastTimer = null;
 
-  var wallpaper = loadInt('quickhome.wallpaper', 0);
-  var soundOn = loadFlag('quickhome.sound', true);
+  var wallpaper = load(STORE.wallpaper, 0);
+  var soundOn = !!load(STORE.sound, true);
   var audioCtx = null;
 
   // ---- keys ----
@@ -73,29 +85,30 @@
 
   function handleHomeKey(e) {
     var k = e.keyCode;
-    if (k === 37) { setFocus(focused - 1); move(); }
-    else if (k === 39) { setFocus(focused + 1); move(); }
-    else if (k === 13) open(focused);
-    else if (k >= 49 && k < 49 + tiles.length) { setFocus(k - 49); open(k - 49); }
-    else if (k === 403) { openAllApps(); move(); }        // RED
-    else if (k === 404) cycleWallpaper();                 // GREEN
-    else if (k === 405) toggleSound();                    // YELLOW
-    else if (k === 406) { confirm(); launch(SAMSUNG_HOME_APP, noHome); } // BLUE
-    else if (k === 10009) { /* Back: this is the home screen, so stay. */ }
+    var digit = k - KEY.DIGIT_1;
+    if (k === KEY.LEFT) { setFocus(focused - 1); soundMove(); }
+    else if (k === KEY.RIGHT) { setFocus(focused + 1); soundMove(); }
+    else if (k === KEY.OK) open(focused);
+    else if (digit >= 0 && digit < tiles.length) { setFocus(digit); open(digit); }
+    else if (k === KEY.RED) { openAllApps(); soundMove(); }
+    else if (k === KEY.GREEN) cycleWallpaper();
+    else if (k === KEY.YELLOW) toggleSound();
+    else if (k === KEY.BLUE) { soundOpen(); launch(SAMSUNG_HOME_APP, noHome); }
+    else if (k === KEY.BACK) { /* this is the home screen, so stay */ }
     else return;
     e.preventDefault();
   }
 
   function handleAppsKey(e) {
     var k = e.keyCode;
-    if (k === 10009 || k === 403) closeAllApps();
-    else if (k === 13) launchGridApp();
-    else if (k === 37) { setGridFocus(gridFocus - 1); move(); }
-    else if (k === 39) { setGridFocus(gridFocus + 1); move(); }
-    else if (k === 38) { setGridFocus(gridFocus - GRID_COLS); move(); }
-    else if (k === 40) { setGridFocus(gridFocus + GRID_COLS); move(); }
-    else if (k === 404) cycleWallpaper();
-    else if (k === 405) toggleSound();
+    if (k === KEY.BACK || k === KEY.RED) closeAllApps();
+    else if (k === KEY.OK) launchGridApp();
+    else if (k === KEY.LEFT) { setGridFocus(gridFocus - 1); soundMove(); }
+    else if (k === KEY.RIGHT) { setGridFocus(gridFocus + 1); soundMove(); }
+    else if (k === KEY.UP) { setGridFocus(gridFocus - GRID_COLS); soundMove(); }
+    else if (k === KEY.DOWN) { setGridFocus(gridFocus + GRID_COLS); soundMove(); }
+    else if (k === KEY.GREEN) cycleWallpaper();
+    else if (k === KEY.YELLOW) toggleSound();
     else return;
     e.preventDefault();
   }
@@ -124,7 +137,7 @@
   function open(index) {
     if (launching) return; // a held OK button repeats; open once
     launching = true;
-    confirm();
+    soundOpen();
     setTimeout(function () { launching = false; }, LAUNCH_LOCK_MS);
 
     var key = tiles[index].getAttribute('data-open');
@@ -224,7 +237,7 @@
     appsEmpty.style.display = 'none';
     allApps.forEach(function (app, i) {
       var cell = document.createElement('div');
-      cell.className = 'app-cell' + (i === gridFocus ? ' is-focused' : '');
+      cell.className = 'app-cell';
       var badge = document.createElement('span');
       badge.className = 'app-badge';
       badge.textContent = (app.name || '?').charAt(0).toUpperCase();
@@ -237,18 +250,16 @@
       cell.addEventListener('click', function () { setGridFocus(i); launchGridApp(); });
       appsGrid.appendChild(cell);
     });
-    gridFocus = Math.min(gridFocus, allApps.length - 1);
     setGridFocus(gridFocus);
   }
 
   function setGridFocus(index) {
     var cells = appsGrid.children;
     if (!cells.length) return;
-    index = Math.max(0, Math.min(cells.length - 1, index));
-    if (cells[gridFocus]) cells[gridFocus].className = cells[gridFocus].className.replace(' is-focused', '');
-    gridFocus = index;
+    if (cells[gridFocus]) cells[gridFocus].classList.remove('is-focused');
+    gridFocus = Math.max(0, Math.min(cells.length - 1, index));
     var cell = cells[gridFocus];
-    cell.className += ' is-focused';
+    cell.classList.add('is-focused');
     // Keep the focused cell on screen without relying on scrollIntoView options.
     var top = cell.offsetTop, bottom = top + cell.offsetHeight;
     if (top < appsGrid.scrollTop) appsGrid.scrollTop = top - 20;
@@ -258,7 +269,7 @@
   function launchGridApp() {
     var app = allApps[gridFocus];
     if (!app) return;
-    confirm();
+    soundOpen();
     launch(app.id, function (err) {
       toast('Couldn\'t open ' + (app.name || app.id) + ' (' + err.name + ').');
     });
@@ -288,7 +299,7 @@
         Object.keys(APPS).forEach(function (key) {
           appIds[key] = findApp(APPS[key], allApps);
         });
-        saveCache();
+        save(STORE.appIds, appIds);
         updateSubtitles();
         done();
       }, done);
@@ -328,28 +339,20 @@
   // ---- wallpapers ----
 
   function applyWallpaper() {
-    if (wallpaper < 0 || wallpaper >= WALLPAPERS.length) wallpaper = 0;
+    if (!WALLPAPERS[wallpaper]) wallpaper = 0;
     var w = WALLPAPERS[wallpaper];
-    var body = document.body;
-    for (var i = 0; i < WALLPAPERS.length; i++) {
-      if (WALLPAPERS[i].cls) body.classList.remove(WALLPAPERS[i].cls);
-    }
-    body.classList.remove('wp-photo');
-    if (w.photo) {
-      body.classList.add('wp-photo');
-      // Dark scrim over the photo so bright tiles and white text stay readable.
-      body.style.backgroundImage = 'linear-gradient(rgba(6,8,12,0.5), rgba(6,8,12,0.5)), url("' + w.photo + '")';
-    } else {
-      body.style.backgroundImage = '';
-      body.classList.add(w.cls);
-    }
+    document.body.className = w.cls || 'wp-photo';
+    // Dark scrim over a photo so bright tiles and white text stay readable.
+    document.body.style.backgroundImage = w.photo
+      ? 'linear-gradient(rgba(6,8,12,0.5), rgba(6,8,12,0.5)), url("' + w.photo + '")'
+      : '';
   }
 
   function cycleWallpaper() {
     wallpaper = (wallpaper + 1) % WALLPAPERS.length;
     applyWallpaper();
-    saveStr('quickhome.wallpaper', String(wallpaper));
-    move();
+    save(STORE.wallpaper, wallpaper);
+    soundMove();
     toast('Wallpaper: ' + WALLPAPERS[wallpaper].label);
   }
 
@@ -357,8 +360,8 @@
 
   function toggleSound() {
     soundOn = !soundOn;
-    saveStr('quickhome.sound', soundOn ? '1' : '0');
-    if (soundOn) confirm();
+    save(STORE.sound, soundOn);
+    if (soundOn) soundOpen();
     toast('Sound: ' + (soundOn ? 'on' : 'off'));
   }
 
@@ -368,6 +371,7 @@
       var Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return;
       if (!audioCtx) audioCtx = new Ctx();
+      if (audioCtx.state === 'suspended') audioCtx.resume(); // e.g. after another app had the audio
       var osc = audioCtx.createOscillator();
       var gain = audioCtx.createGain();
       osc.type = 'sine';
@@ -382,25 +386,20 @@
     } catch (e) { /* no audio: not important */ }
   }
 
-  function move() { beep(660, 0.045, 0.04); }
-  function confirm() { beep(880, 0.07, 0.06); setTimeout(function () { beep(1245, 0.09, 0.05); }, 55); }
+  function soundMove() { beep(660, 0.045, 0.04); }
+  function soundOpen() { beep(880, 0.07, 0.06); setTimeout(function () { beep(1245, 0.09, 0.05); }, 55); }
 
-  // ---- storage helpers ----
+  // ---- storage (optional: without it nothing is remembered) ----
 
-  function loadCache() {
-    try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; } catch (e) { return {}; }
+  function load(key, fallback) {
+    try {
+      var value = JSON.parse(localStorage.getItem(key));
+      return value === null ? fallback : value;
+    } catch (e) { return fallback; }
   }
-  function saveCache() {
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify(appIds)); } catch (e) { /* optional */ }
-  }
-  function loadInt(key, fallback) {
-    try { var v = parseInt(localStorage.getItem(key), 10); return isNaN(v) ? fallback : v; } catch (e) { return fallback; }
-  }
-  function loadFlag(key, fallback) {
-    try { var v = localStorage.getItem(key); return v === null ? fallback : v === '1'; } catch (e) { return fallback; }
-  }
-  function saveStr(key, value) {
-    try { localStorage.setItem(key, value); } catch (e) { /* optional */ }
+
+  function save(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* not remembered */ }
   }
 
   // ---- clock, toast, layout ----

@@ -76,15 +76,33 @@ body.wp-photo {
   border-radius: 28px;
   text-align: left;
   white-space: normal;
-  opacity: 0.62;
-  transition: transform 0.14s ease-out, opacity 0.14s ease-out;
+  transition: transform 0.14s ease-out;
   will-change: transform;
   cursor: pointer;
 }
 
 .tile.is-focused {
-  opacity: 1;
   transform: scale(1.07);
+}
+
+/* Unfocused tiles are dimmed by a dark layer, not transparency, so a photo
+   wallpaper never shows through them. */
+.tile::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  border-radius: 28px;
+  background: #000;
+  opacity: 0.4;
+  transition: opacity 0.14s ease-out;
+}
+
+.tile.is-focused::before {
+  opacity: 0;
 }
 
 .tile.is-focused::after {
@@ -243,10 +261,15 @@ body.wp-photo {
   font-size: 0;
 }
 
+/* No mouse on a TV, and a scrollbar would squeeze the 5 columns down to 4. */
+.apps-grid::-webkit-scrollbar {
+  display: none;
+}
+
 .app-cell {
   display: inline-block;
   vertical-align: top;
-  width: 304px;
+  width: 320px; /* 5 x (320 + 2 x 10 margin) = the grid's 1700px */
   height: 150px;
   margin: 10px;
   padding: 24px;
