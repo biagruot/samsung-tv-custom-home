@@ -1,94 +1,98 @@
 # Quick Home
 
-A four-tile home screen for my Samsung TV (QE55Q70AATXZT · Q70A 2021 · Tizen 6):
-**TV channels · Stremio · YouTube · YouTube Music**. It always opens on
-TV channels, so **OK** goes straight to live TV. Works offline.
+Una schermata Home a quattro riquadri per il mio TV Samsung (QE55Q70AATXZT ·
+Q70A 2021 · Tizen 6): **Canali TV · Stremio · YouTube · YouTube Music**. Si
+apre sempre su Canali TV, quindi **OK** porta subito alla TV in diretta.
+Funziona senza internet.
 
-| Remote | Does |
+| Telecomando | Cosa fa |
 | --- | --- |
-| ◀ ▶ · OK | Move · open |
-| 1 – 4 | Open that tile directly |
-| 🔴 Red | All installed apps (arrows, OK, Back closes) |
-| 🟢 Green | Next wallpaper (5 gradients, 6 photos) |
-| 🟡 Yellow | Navigation sounds on/off |
-| 🔵 Blue | Samsung Home (settings and everything else) |
+| ◀ ▶ · OK | Sposta · apri |
+| 1 – 4 | Apre direttamente quel riquadro |
+| 🔴 Rosso | Tutte le app installate (frecce, OK, Indietro chiude) |
+| 🟢 Verde | Sfondo successivo (5 sfumature, 6 foto) |
+| 🟡 Giallo | Suoni di navigazione sì/no |
+| 🔵 Blu | Home Samsung (impostazioni e tutto il resto) |
 
-The colour keys are the A/B/C/D row on the remote. Wallpaper and sound are
-remembered; coming back from an app always lands on TV channels.
+I tasti colorati sono la fila A/B/C/D del telecomando. Sfondo e suoni restano
+memorizzati; tornando da un'app si riparte sempre da Canali TV.
 
-## Install
+## Installazione
 
-Needs a Windows PC on the same network as the TV and a Samsung account.
+Servono un PC Windows sulla stessa rete del TV e un account Samsung.
 
-1. **Build.** In the repo folder:
+1. **Build.** Nella cartella del repo:
    ```powershell
    powershell -ExecutionPolicy Bypass -File tools\build.ps1
    ```
-   This writes `dist\quick-home.wgt`. It is unsigned; Apps2Samsung signs it.
-2. **Developer Mode.** On the TV open **Apps** and type **1 2 3 4 5** (on the
-   Smart Remote, the **123** button brings up the number pad). Switch it
-   **On**, enter the PC's IPv4 address (from `ipconfig`), then hold Power
-   until the TV restarts.
-3. **Install.** Start [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases),
-   let it find the TV, sign in with the Samsung account (this creates the
-   certificate once), and install `dist\quick-home.wgt`.
-4. **Pin it.** Apps → **Quick Home** → options (Down, or hold OK) →
-   **Add to Home**, and move it to the first position. From then on:
+   Crea `dist\quick-home.wgt`, non firmato: lo firma Apps2Samsung.
+2. **Modalità sviluppatore.** Sul TV apri **App** e digita **1 2 3 4 5** (sullo
+   Smart Remote il tasto **123** mostra il tastierino numerico). Attivala,
+   inserisci l'indirizzo IPv4 del PC (da `ipconfig`) e tieni premuto il tasto
+   di accensione finché il TV si riavvia.
+3. **Installa.** Avvia [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases),
+   lascia che trovi il TV, accedi con l'account Samsung (crea il certificato,
+   una volta sola) e installa `dist\quick-home.wgt`.
+4. **Fissala in Home.** App → **Quick Home** → opzioni (giù, o tieni premuto
+   OK) → **Aggiungi a Home**, e spostala al primo posto. Da lì in poi:
    **Home**, **OK**.
 
-To update, rebuild and install again with the same tool and account. With a
-different certificate the install fails until the old copy is uninstalled.
+Per aggiornare: rifai la build e reinstalla con lo stesso strumento e lo
+stesso account. Con un certificato diverso l'installazione fallisce finché
+non disinstalli la vecchia copia.
 
-Optional: **Settings → General → Smart Features** (Impostazioni → Generale →
-Funzioni Smart): turn off **Autorun Samsung TV Plus** and **Autorun Smart
-Hub** so the TV starts on your channels. Firmware updates can turn them back on.
+Facoltativo: in **Impostazioni → Generale → Funzioni Smart** disattiva
+l'**avvio automatico di Samsung TV Plus** e di **Smart Hub**, così il TV si
+accende sui tuoi canali. Un aggiornamento del firmware può riattivarli.
 
-## Test on the TV
+## Test sul TV
 
-- [ ] Opens with **TV channels** focused; OK shows live TV, also when an HDMI input was used last
-- [ ] **2**, **3**, **4** open Stremio, YouTube and YouTube (Music)
-- [ ] 🔴 lists the installed apps; arrows, OK and Back work
-- [ ] 🟢 goes through all 11 wallpapers, photos included
-- [ ] 🟡 turns the clicks off and on
-- [ ] 🔵 opens Samsung Home
-- [ ] Leave an app with Back or Home → Quick Home is back on TV channels
-- [ ] Turn the TV off and on → wallpaper and sound setting are kept
+- [ ] Si apre con **Canali TV** selezionato; OK mostra la TV in diretta, anche se prima era attivo un ingresso HDMI
+- [ ] **2**, **3**, **4** aprono Stremio, YouTube e YouTube (Music)
+- [ ] 🔴 mostra le app installate; frecce, OK e Indietro funzionano
+- [ ] 🟢 passa per tutti gli 11 sfondi, foto comprese
+- [ ] 🟡 spegne e riaccende i suoni
+- [ ] 🔵 apre la Home Samsung
+- [ ] Uscendo da un'app con Indietro o Home si torna su Canali TV
+- [ ] Spegnendo e riaccendendo il TV, sfondo e suoni restano come li avevi lasciati
 
-## Preview on a PC
+## Anteprima sul PC
 
-Open `src/index.html` in Chrome or Edge. Arrows, Enter and 1–4 work as on
-the remote; **R G Y B** are the colour keys and **Esc** is Back. Nothing
-really opens: a yellow label shows what the TV would open. Add `?nostremio`
-to the address to see a TV without Stremio.
+Apri `src/index.html` in Chrome o Edge. Frecce, Invio e 1–4 funzionano come
+sul telecomando; **R G Y B** sono i tasti colorati ed **Esc** è Indietro.
+Non si apre niente davvero: un'etichetta gialla mostra cosa aprirebbe il TV.
+Aggiungi `?nostremio` all'indirizzo per vedere un TV senza Stremio.
 
-## Change things
+## Modifiche
 
-- **Tiles:** `APPS` in `src/app.js` and the tile markup in `src/index.html`.
-- **Wallpapers:** `WALLPAPERS` in `src/app.js`. Photos are 1920×1080 JPEGs in
-  `src/img/wallpapers/` (Unsplash License, see `CREDITS.txt`).
-- Keep the package id `QuickHome1` in `src/config.xml`: a new id installs
-  as a different app.
+- **Riquadri:** `APPS` in `src/app.js` e il markup dei riquadri in `src/index.html`.
+- **Sfondi:** `WALLPAPERS` in `src/app.js`. Le foto sono JPEG 1920×1080 in
+  `src/img/wallpapers/` (licenza Unsplash, vedi `CREDITS.txt`).
+- Non cambiare l'id del pacchetto `QuickHome1` in `src/config.xml`: con un id
+  nuovo il TV la installa come un'altra app.
 
-## Limits
+## Limiti
 
-- **The Home button still opens Samsung's Home bar.** Apps can't take it
-  over; the unofficial and risky way is in [docs/home-button.md](docs/home-button.md).
-- **YouTube Music opens YouTube**, because Samsung TVs have no separate app.
-  If one ever appears, tile 4 picks it up by itself.
-- Apps you open still load at their own speed.
+- **Il tasto Home apre ancora la barra Home di Samsung.** Le app non possono
+  prenderne il controllo; il metodo non ufficiale, e rischioso, è in
+  [docs/home-button.md](docs/home-button.md).
+- **YouTube Music apre YouTube**, perché sui TV Samsung non c'è un'app a parte.
+  Se un giorno compare, il riquadro 4 la trova da solo.
+- Le app aperte si caricano comunque con i loro tempi.
 
-## How it works
+## Come funziona
 
-`src/app.js` lists the installed apps once the screen is up, finds Stremio,
-YouTube and YouTube Music by id or name, and caches their ids for next time. A missing app
-gets one fresh lookup before a message appears. TV channels first switches
-the picture to the tuner, then opens Samsung's TV viewer. `src/tizen-mock.js`
-stands in for the TV's APIs on a PC and does nothing on the TV.
+Appena la schermata è visibile, `src/app.js` legge le app installate, trova
+Stremio, YouTube e YouTube Music per id o per nome e ne memorizza gli id per
+le volte successive. Se un'app manca, rilegge l'elenco una volta prima di
+mostrare un messaggio; se il TV non risponde, nella griglia OK riprova.
+Canali TV prima porta l'immagine sul sintonizzatore, poi apre il visualizzatore
+TV di Samsung. `src/tizen-mock.js` simula le API del TV sul PC e sul TV non fa nulla.
 
-`tools/` also holds the scripts that made `src/icon.png` and the wallpapers;
-they are only needed to redo those.
+In `tools/` ci sono anche gli script che hanno creato `src/icon.png` e gli
+sfondi; servono solo per rifarli.
 
-## Undo
+## Disinstallare
 
-Uninstall **Quick Home** from Apps. Switch Developer Mode off the same way it
-was switched on (Apps, then 1 2 3 4 5).
+Disinstalla **Quick Home** da App. La modalità sviluppatore si spegne come si
+è accesa (App, poi 1 2 3 4 5).

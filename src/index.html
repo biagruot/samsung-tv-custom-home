@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1920, height=1080">
@@ -21,8 +21,8 @@
         <rect x="5" y="10" width="54" height="36" rx="6" fill="none" stroke="#fff" stroke-width="5"/>
         <path d="M22 55h20" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
       </svg>
-      <span class="label">TV channels</span>
-      <span class="sub" data-sub="tv">Live TV</span>
+      <span class="label">Canali TV</span>
+      <span class="sub" data-sub="tv">In diretta</span>
     </div>
 
     <div class="tile tile-stremio" data-open="stremio">
@@ -58,13 +58,13 @@
   </section>
 
   <footer class="hint">
-    <span>&#9664; &#9654; move</span>
-    <span>OK open</span>
-    <span>1&ndash;4 direct</span>
-    <span><b class="key key-red"></b> All apps</span>
-    <span><b class="key key-green"></b> Wallpaper</span>
-    <span><b class="key key-yellow"></b> Sound</span>
-    <span><b class="key key-blue"></b> Samsung Home</span>
+    <span>&#9664; &#9654; sposta</span>
+    <span>OK apri</span>
+    <span>1&ndash;4 diretto</span>
+    <span><b class="key key-red"></b> Tutte le app</span>
+    <span><b class="key key-green"></b> Sfondo</span>
+    <span><b class="key key-yellow"></b> Suoni</span>
+    <span><b class="key key-blue"></b> Home Samsung</span>
   </footer>
   <div class="toast" id="toast"></div>
 </main>
@@ -72,11 +72,11 @@
 <!-- All installed apps. Hidden until the red button opens it. -->
 <section class="apps-screen" id="appsScreen">
   <header class="apps-head">
-    <span>All apps</span>
-    <span class="apps-hint">&#9664; &#9654; &#9650; &#9660; move &nbsp;&middot;&nbsp; OK open &nbsp;&middot;&nbsp; Back close</span>
+    <span>Tutte le app</span>
+    <span class="apps-hint">&#9664; &#9654; &#9650; &#9660; sposta &nbsp;&middot;&nbsp; OK apri &nbsp;&middot;&nbsp; Indietro chiudi</span>
   </header>
   <div class="apps-grid" id="appsGrid"></div>
-  <div class="apps-empty" id="appsEmpty">Reading installed apps&hellip;</div>
+  <div class="apps-empty" id="appsEmpty"></div>
 </section>
 
 <!-- Does nothing on the TV; stands in for the TV's APIs when previewed on a PC. -->

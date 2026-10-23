@@ -30,17 +30,17 @@
   // img/wallpapers/CREDITS.txt); each loads only when selected. Gradients
   // come first so the default stays instant.
   var WALLPAPERS = [
-    { cls: 'wp-midnight', label: 'Midnight' },
-    { cls: 'wp-ocean', label: 'Ocean' },
+    { cls: 'wp-midnight', label: 'Mezzanotte' },
+    { cls: 'wp-ocean', label: 'Oceano' },
     { cls: 'wp-aurora', label: 'Aurora' },
-    { cls: 'wp-ember', label: 'Ember' },
-    { cls: 'wp-plum', label: 'Plum' },
-    { photo: 'img/wallpapers/night.jpg', label: 'Desert stars' },
-    { photo: 'img/wallpapers/misty.jpg', label: 'Misty coast' },
-    { photo: 'img/wallpapers/forest.jpg', label: 'Forest mist' },
-    { photo: 'img/wallpapers/cove.jpg', label: 'Quiet cove' },
-    { photo: 'img/wallpapers/peaks.jpg', label: 'Blue peaks' },
-    { photo: 'img/wallpapers/ridge.jpg', label: 'Sunlit ridges' }
+    { cls: 'wp-ember', label: 'Brace' },
+    { cls: 'wp-plum', label: 'Prugna' },
+    { photo: 'img/wallpapers/night.jpg', label: 'Stelle nel deserto' },
+    { photo: 'img/wallpapers/misty.jpg', label: 'Costa nella nebbia' },
+    { photo: 'img/wallpapers/forest.jpg', label: 'Bosco nella nebbia' },
+    { photo: 'img/wallpapers/cove.jpg', label: 'Baia tranquilla' },
+    { photo: 'img/wallpapers/peaks.jpg', label: 'Vette blu' },
+    { photo: 'img/wallpapers/ridge.jpg', label: 'Crinali al sole' }
   ];
 
   // Apps are found by known id first, then by name, because store ids can
@@ -148,7 +148,7 @@
   function openLiveTv() {
     showTuner(function () {
       launch(TV_VIEWER_APP, function (err) {
-        fail('Couldn\'t open TV channels (' + err.name + ').');
+        fail('Impossibile aprire i canali TV (' + err.name + ').');
       });
     });
   }
@@ -188,12 +188,12 @@
 
     if (!id) {
       if (!retried) retry();
-      else fail('Couldn\'t find ' + app.label + ' on this TV. Install it from the Samsung app store.');
+      else fail('Non trovo ' + app.label + ' su questo TV. Installa l\'app dallo store Samsung.');
       return;
     }
     launch(id, function (err) {
       if (!retried) retry();
-      else fail('Couldn\'t open ' + app.label + ' (' + err.name + ').');
+      else fail('Impossibile aprire ' + app.label + ' (' + err.name + ').');
     });
   }
 
@@ -206,7 +206,7 @@
   }
 
   function noHome(err) {
-    fail('Couldn\'t open Samsung Home (' + err.name + ').');
+    fail('Impossibile aprire la Home Samsung (' + err.name + ').');
   }
 
   function fail(message) {
@@ -219,8 +219,14 @@
   function openAllApps() {
     mode = 'apps';
     appsScreen.classList.add('is-open');
-    renderGrid();
+    fillGrid();
+  }
+
+  // Asks the TV for its apps if we have none yet. Meanwhile the grid says
+  // it is reading them, and if the TV doesn't answer, how to try again.
+  function fillGrid() {
     if (!allApps.length) refreshApps(renderGrid);
+    renderGrid();
   }
 
   function closeAllApps() {
@@ -231,6 +237,9 @@
   function renderGrid() {
     appsGrid.innerHTML = '';
     if (!allApps.length) {
+      appsEmpty.textContent = listing
+        ? 'Lettura delle app installate\u2026'
+        : 'Impossibile leggere le app installate. Premi OK per riprovare.';
       appsEmpty.style.display = 'block';
       return;
     }
@@ -268,10 +277,10 @@
 
   function launchGridApp() {
     var app = allApps[gridFocus];
-    if (!app) return;
+    if (!app) { fillGrid(); return; } // empty grid: OK retries the list
     soundOpen();
     launch(app.id, function (err) {
-      toast('Couldn\'t open ' + (app.name || app.id) + ' (' + err.name + ').');
+      toast('Impossibile aprire ' + (app.name || app.id) + ' (' + err.name + ').');
     });
   }
 
@@ -326,9 +335,9 @@
   }
 
   function updateSubtitles() {
-    setSub('stremio', 'stremio' in appIds && !appIds.stremio ? 'Not installed' : '');
-    setSub('youtube', 'youtube' in appIds && !appIds.youtube ? 'Not installed' : '');
-    setSub('ytmusic', 'ytmusic' in appIds && !appIds.ytmusic ? 'Opens in YouTube' : '');
+    setSub('stremio', 'stremio' in appIds && !appIds.stremio ? 'App non installata' : '');
+    setSub('youtube', 'youtube' in appIds && !appIds.youtube ? 'App non installata' : '');
+    setSub('ytmusic', 'ytmusic' in appIds && !appIds.ytmusic ? 'Si apre in YouTube' : '');
   }
 
   function setSub(key, text) {
@@ -353,7 +362,7 @@
     applyWallpaper();
     save(STORE.wallpaper, wallpaper);
     soundMove();
-    toast('Wallpaper: ' + WALLPAPERS[wallpaper].label);
+    toast('Sfondo: ' + WALLPAPERS[wallpaper].label);
   }
 
   // ---- navigation sounds (synthesised, no audio files) ----
@@ -362,7 +371,7 @@
     soundOn = !soundOn;
     save(STORE.sound, soundOn);
     if (soundOn) soundOpen();
-    toast('Sound: ' + (soundOn ? 'on' : 'off'));
+    toast('Suoni: ' + (soundOn ? 'attivi' : 'disattivati'));
   }
 
   function beep(freq, duration, volume) {
@@ -406,8 +415,10 @@
 
   function tick() {
     var now = new Date();
-    clockEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    dateEl.textContent = now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
+    // Italian like the rest of the screen, whatever language the TV is set to.
+    var date = now.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+    clockEl.textContent = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    dateEl.textContent = date.charAt(0).toUpperCase() + date.slice(1);
     clearTimeout(tickTimer);
     tickTimer = setTimeout(tick, 60050 - now.getSeconds() * 1000 - now.getMilliseconds());
   }

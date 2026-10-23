@@ -1,48 +1,51 @@
-# Making the Home button open Quick Home
+# Far aprire Quick Home al tasto Home
 
-**Status: not done, not tested on this TV.** Samsung gives apps no official way to
-take over the Home button. This page collects what is known for when we try it.
+**Stato: non fatto, mai provato su questo TV.** Samsung non dà alle app un modo
+ufficiale per prendere il controllo del tasto Home. Qui c'è quello che si sa,
+per quando ci proveremo.
 
 | | |
 | --- | --- |
 | TV | QE55Q70AATXZT (Q70A, 2021) |
 | Firmware | T-NKM2DEUC-2301.1., BT-S |
-| OS | Tizen ~6.0 (Chromium ~85) |
-| Quick Home app id | `QuickHome1.Launcher` (package `QuickHome1`, must not change) |
+| Sistema | Tizen ~6.0 (Chromium ~85) |
+| Id app Quick Home | `QuickHome1.Launcher` (pacchetto `QuickHome1`, da non cambiare) |
 
-## How it works
+## Come funziona
 
-The app the Home button opens is stored in Tizen's system key-value store
-(**vconf**) under:
+L'app che si apre col tasto Home è salvata nell'archivio chiave-valore di
+sistema di Tizen (**vconf**), sotto:
 
 ```
-db/appfw/home_appid      default: com.samsung.tv.csfs (Samsung's Home bar)
+db/appfw/home_appid      predefinito: com.samsung.tv.csfs (la barra Home di Samsung)
 ```
 
-Setting it to `QuickHome1.Launcher` would make Home open Quick Home. Two
-community projects do this on their own TVs:
+Impostandola a `QuickHome1.Launcher`, il tasto Home aprirebbe Quick Home. Due
+progetti della community lo fanno sui loro TV:
 
 - arn0-tv: https://github.com/NelsonEU/arn0-tv
 - CleanFrame: https://github.com/nthnclrk/CleanFrame
 
-The general approach:
+L'approccio in generale:
 
-1. Quick Home installed and working (see the README).
-2. TV in Developer Mode, PC connected with `sdb connect <TV_IP>` (`sdb` comes
-   with the [Tizen TV SDK](https://developer.samsung.com/smarttv/develop/getting-started/setting-up-sdk/installing-tv-sdk.html)).
-3. Write the key with elevated rights (a privileged helper, or a shell as the
-   system user), then restart the app framework or reboot the TV.
+1. Quick Home installata e funzionante (vedi il README).
+2. TV in modalità sviluppatore e PC collegato con `sdb connect <IP_DEL_TV>`
+   (`sdb` è incluso nel [Tizen TV SDK](https://developer.samsung.com/smarttv/develop/getting-started/setting-up-sdk/installing-tv-sdk.html)).
+3. Scrivere la chiave con permessi elevati (un helper privilegiato, o una shell
+   come utente di sistema), poi riavviare il framework delle app o il TV.
 
-The exact commands and helper differ by model and firmware; check those
-projects for what worked on their TVs before trying anything here.
+Comandi esatti e helper cambiano da modello a modello e da firmware a firmware:
+prima di provare qualsiasi cosa qui, controlla in quei progetti cosa ha
+funzionato sui loro TV.
 
-## Risk
+## Rischi
 
-Neither method has been confirmed on this model and firmware. If the write is
-refused or the key differs, Home may open nothing, and recovery can mean a
-factory reset or reflashing the firmware from USB.
+Nessuno dei due metodi è stato confermato su questo modello e firmware. Se la
+scrittura viene rifiutata o la chiave è diversa, il tasto Home potrebbe non
+aprire più nulla, e per rimediare può servire un ripristino di fabbrica o
+reinstallare il firmware da USB.
 
-## Undo
+## Annullare
 
-Set `db/appfw/home_appid` back to `com.samsung.tv.csfs` the same way, or
-factory-reset the TV (Settings → General → Reset).
+Rimetti `db/appfw/home_appid` a `com.samsung.tv.csfs` con lo stesso metodo,
+oppure fai un ripristino di fabbrica (Impostazioni → Generale → Ripristina).

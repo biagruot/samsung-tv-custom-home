@@ -52,7 +52,7 @@
         'background:#ffd54a;color:#111;font:600 16px/1.3 Segoe UI,Arial,sans-serif;z-index:9';
       document.body.appendChild(el);
     }
-    el.textContent = 'Preview: ' + text;
+    el.textContent = 'Anteprima: ' + text;
   }
 
   window.tizen = {
@@ -62,7 +62,7 @@
       launch: function (id, ok, err) {
         var known = alwaysKnown[id] || apps.some(function (a) { return a.id === id; });
         if (!known) { later(err, { name: 'NotFoundError' }); return; }
-        announce('would open ' + id + (id === 'org.tizen.tv-viewer' ? ' on ' + source.type : ''));
+        announce('aprirebbe ' + id + (id === 'org.tizen.tv-viewer' ? ' (sorgente ' + source.type + ')' : ''));
         later(ok);
       }
     },
