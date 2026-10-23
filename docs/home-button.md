@@ -28,7 +28,7 @@ progetti della community lo fanno sui loro TV:
 
 L'approccio in generale:
 
-1. Quick Home installata e funzionante (vedi il README).
+1. Quick Home installata e funzionante (vedi [internal.md](internal.md)).
 2. TV in modalità sviluppatore e PC collegato con `sdb connect <IP_DEL_TV>`
    (`sdb` è incluso nel [Tizen TV SDK](https://developer.samsung.com/smarttv/develop/getting-started/setting-up-sdk/installing-tv-sdk.html)).
 3. Scrivere la chiave con permessi elevati (un helper privilegiato, o una shell

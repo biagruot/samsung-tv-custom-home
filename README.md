@@ -1,98 +1,72 @@
 # Quick Home
 
-Una schermata Home a quattro riquadri per il mio TV Samsung (QE55Q70AATXZT ·
-Q70A 2021 · Tizen 6): **Canali TV · Stremio · YouTube · YouTube Music**. Si
-apre sempre su Canali TV, quindi **OK** porta subito alla TV in diretta.
-Funziona senza internet.
+A clean, fast home screen for Samsung Smart TVs.
 
-| Telecomando | Cosa fa |
+Samsung's Home bar is crowded with promotions and apps you never open.
+Quick Home is a simpler screen to use instead: four big tiles for what you
+actually watch (**live TV, Stremio, YouTube and YouTube Music**), with every
+other app one button away.
+
+![Quick Home](docs/screenshots/home.jpg)
+
+## What it does
+
+- **Opens on live TV.** TV channels is always selected, so pressing OK puts you straight on your channels.
+- **One press per app.** Number keys 1–4 open a tile directly.
+- **All your apps.** The red button shows every installed app in a grid.
+- **Your look.** The green button switches between 11 wallpapers, photos included.
+- **Light and private.** No ads, no tracking, no internet needed.
+
+| Photo wallpapers | All apps |
 | --- | --- |
-| ◀ ▶ · OK | Sposta · apri |
-| 1 – 4 | Apre direttamente quel riquadro |
-| 🔴 Rosso | Tutte le app installate (frecce, OK, Indietro chiude) |
-| 🟢 Verde | Sfondo successivo (5 sfumature, 6 foto) |
-| 🟡 Giallo | Suoni di navigazione sì/no |
-| 🔵 Blu | Home Samsung (impostazioni e tutto il resto) |
+| ![Photo wallpaper](docs/screenshots/wallpaper.jpg) | ![All apps](docs/screenshots/all-apps.jpg) |
 
-I tasti colorati sono la fila A/B/C/D del telecomando. Sfondo e suoni restano
-memorizzati; tornando da un'app si riparte sempre da Canali TV.
+## Remote
 
-## Installazione
+| Button | Action |
+| --- | --- |
+| ◀ ▶ and OK | Move and open |
+| 1 – 4 | Open that tile |
+| 🔴 Red | All apps |
+| 🟢 Green | Next wallpaper |
+| 🟡 Yellow | Navigation sounds on/off |
+| 🔵 Blue | Samsung's own Home (settings and everything else) |
 
-Servono un PC Windows sulla stessa rete del TV e un account Samsung.
+## Install it on your TV
 
-1. **Build.** Nella cartella del repo:
+You need a Windows PC on the same network as the TV and a free Samsung account.
+
+1. **Build the app.** Download this repo, open PowerShell in its folder and run:
    ```powershell
    powershell -ExecutionPolicy Bypass -File tools\build.ps1
    ```
-   Crea `dist\quick-home.wgt`, non firmato: lo firma Apps2Samsung.
-2. **Modalità sviluppatore.** Sul TV apri **App** e digita **1 2 3 4 5** (sullo
-   Smart Remote il tasto **123** mostra il tastierino numerico). Attivala,
-   inserisci l'indirizzo IPv4 del PC (da `ipconfig`) e tieni premuto il tasto
-   di accensione finché il TV si riavvia.
-3. **Installa.** Avvia [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases),
-   lascia che trovi il TV, accedi con l'account Samsung (crea il certificato,
-   una volta sola) e installa `dist\quick-home.wgt`.
-4. **Fissala in Home.** App → **Quick Home** → opzioni (giù, o tieni premuto
-   OK) → **Aggiungi a Home**, e spostala al primo posto. Da lì in poi:
-   **Home**, **OK**.
+   This creates `dist\quick-home.wgt`.
+2. **Turn on Developer Mode.** On the TV, open **Apps**, type **1 2 3 4 5**,
+   switch Developer Mode **on**, enter your PC's IP address and restart the TV.
+3. **Install.** Use [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases)
+   to send `dist\quick-home.wgt` to the TV. Sign in with your Samsung account
+   when it asks.
+4. **Pin it.** In **Apps**, select **Quick Home**, choose **Add to Home** and move
+   it to the first position. From then on it's **Home**, then **OK**.
 
-Per aggiornare: rifai la build e reinstalla con lo stesso strumento e lo
-stesso account. Con un certificato diverso l'installazione fallisce finché
-non disinstalli la vecchia copia.
+## Try it in your browser
 
-Facoltativo: in **Impostazioni → Generale → Funzioni Smart** disattiva
-l'**avvio automatico di Samsung TV Plus** e di **Smart Hub**, così il TV si
-accende sui tuoi canali. Un aggiornamento del firmware può riattivarli.
+Open `src/index.html` in Chrome or Edge. The arrow keys, Enter and 1–4 work
+like the remote; **R G Y B** are the coloured buttons and **Esc** is Back.
 
-## Test sul TV
+## Good to know
 
-- [ ] Si apre con **Canali TV** selezionato; OK mostra la TV in diretta, anche se prima era attivo un ingresso HDMI
-- [ ] **2**, **3**, **4** aprono Stremio, YouTube e YouTube (Music)
-- [ ] 🔴 mostra le app installate; frecce, OK e Indietro funzionano
-- [ ] 🟢 passa per tutti gli 11 sfondi, foto comprese
-- [ ] 🟡 spegne e riaccende i suoni
-- [ ] 🔵 apre la Home Samsung
-- [ ] Uscendo da un'app con Indietro o Home si torna su Canali TV
-- [ ] Spegnendo e riaccendendo il TV, sfondo e suoni restano come li avevi lasciati
+- **The Home button still opens Samsung's Home bar.** TV apps aren't allowed
+  to replace it, so Quick Home is one press away instead (Home, then OK).
+- **YouTube Music opens in YouTube**, because Samsung TVs have no separate
+  YouTube Music app.
+- **The on-screen text is in Italian.** All of it lives in `src/index.html`
+  and `src/app.js` if you want another language.
+- Made for a 2021 Samsung Q70A (Tizen 6). Other recent Samsung TVs will
+  probably work too, but haven't been tried.
 
-## Anteprima sul PC
+## Credits
 
-Apri `src/index.html` in Chrome o Edge. Frecce, Invio e 1–4 funzionano come
-sul telecomando; **R G Y B** sono i tasti colorati ed **Esc** è Indietro.
-Non si apre niente davvero: un'etichetta gialla mostra cosa aprirebbe il TV.
-Aggiungi `?nostremio` all'indirizzo per vedere un TV senza Stremio.
-
-## Modifiche
-
-- **Riquadri:** `APPS` in `src/app.js` e il markup dei riquadri in `src/index.html`.
-- **Sfondi:** `WALLPAPERS` in `src/app.js`. Le foto sono JPEG 1920×1080 in
-  `src/img/wallpapers/` (licenza Unsplash, vedi `CREDITS.txt`).
-- Non cambiare l'id del pacchetto `QuickHome1` in `src/config.xml`: con un id
-  nuovo il TV la installa come un'altra app.
-
-## Limiti
-
-- **Il tasto Home apre ancora la barra Home di Samsung.** Le app non possono
-  prenderne il controllo; il metodo non ufficiale, e rischioso, è in
-  [docs/home-button.md](docs/home-button.md).
-- **YouTube Music apre YouTube**, perché sui TV Samsung non c'è un'app a parte.
-  Se un giorno compare, il riquadro 4 la trova da solo.
-- Le app aperte si caricano comunque con i loro tempi.
-
-## Come funziona
-
-Appena la schermata è visibile, `src/app.js` legge le app installate, trova
-Stremio, YouTube e YouTube Music per id o per nome e ne memorizza gli id per
-le volte successive. Se un'app manca, rilegge l'elenco una volta prima di
-mostrare un messaggio; se il TV non risponde, nella griglia OK riprova.
-Canali TV prima porta l'immagine sul sintonizzatore, poi apre il visualizzatore
-TV di Samsung. `src/tizen-mock.js` simula le API del TV sul PC e sul TV non fa nulla.
-
-In `tools/` ci sono anche gli script che hanno creato `src/icon.png` e gli
-sfondi; servono solo per rifarli.
-
-## Disinstallare
-
-Disinstalla **Quick Home** da App. La modalità sviluppatore si spegne come si
-è accesa (App, poi 1 2 3 4 5).
+Wallpaper photos are from [Unsplash](https://unsplash.com/license), selected by
+the [CleanFrame](https://github.com/nthnclrk/CleanFrame) project. See
+[CREDITS.txt](src/img/wallpapers/CREDITS.txt).
