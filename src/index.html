@@ -14,9 +14,48 @@
     <div class="date" id="date"></div>
   </header>
 
+  <!-- Settings bar: ▲ from the tiles. It does what the colour keys do, for
+       remotes that don't have them. -->
+  <nav class="bar">
+    <div class="bar-btn" data-action="apps">
+      <svg class="bar-icon" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="5" y="5" width="9" height="9" rx="2.5" fill="currentColor"/>
+        <rect x="18" y="5" width="9" height="9" rx="2.5" fill="currentColor"/>
+        <rect x="5" y="18" width="9" height="9" rx="2.5" fill="currentColor"/>
+        <rect x="18" y="18" width="9" height="9" rx="2.5" fill="currentColor"/>
+      </svg>
+      <span>Tutte le app</span>
+    </div>
+
+    <div class="bar-btn" data-action="wallpaper">
+      <svg class="bar-icon" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="4" y="6" width="24" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        <circle cx="21" cy="12" r="2.5" fill="currentColor"/>
+        <path d="M6 24l7-8 5 5 3-3 5 6z" fill="currentColor"/>
+      </svg>
+      <span>Sfondo</span>
+    </div>
+
+    <div class="bar-btn" data-action="sound" id="soundBtn">
+      <svg class="bar-icon" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M4 12h5l7-6v20l-7-6H4z" fill="currentColor"/>
+        <path class="sound-on" d="M20 11a6 6 0 0 1 0 10M23 7a11 11 0 0 1 0 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <path class="sound-off" d="M20 12l8 8M28 12l-8 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span>Suoni</span>
+    </div>
+
+    <div class="bar-btn" data-action="samsung">
+      <svg class="bar-icon" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M4 15L16 5l12 10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 13v14h6v-8h4v8h6V13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+      </svg>
+      <span>Home Samsung</span>
+    </div>
+  </nav>
+
   <section class="row">
     <div class="tile tile-tv is-focused" data-open="tv">
-      <span class="num">1</span>
       <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
         <rect x="5" y="10" width="54" height="36" rx="6" fill="none" stroke="#fff" stroke-width="5"/>
         <path d="M22 55h20" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
@@ -26,7 +65,6 @@
     </div>
 
     <div class="tile tile-stremio" data-open="stremio">
-      <span class="num">2</span>
       <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
         <rect x="14" y="14" width="36" height="36" rx="6" transform="rotate(45 32 32)" fill="#fff"/>
         <path d="M27 22.5l13 9.5-13 9.5z" fill="#4b33a8"/>
@@ -36,7 +74,6 @@
     </div>
 
     <div class="tile tile-youtube" data-open="youtube">
-      <span class="num">3</span>
       <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
         <rect x="4" y="13" width="56" height="38" rx="11" fill="#fff"/>
         <path d="M27 23l16 9-16 9z" fill="#d7261e"/>
@@ -46,7 +83,6 @@
     </div>
 
     <div class="tile tile-ytmusic" data-open="ytmusic">
-      <span class="num">4</span>
       <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
         <circle cx="32" cy="32" r="27" fill="#ff1a3c"/>
         <circle cx="32" cy="32" r="15" fill="none" stroke="#fff" stroke-width="3"/>
@@ -65,7 +101,6 @@
         <path d="M32 34c2 5 7 7 7 13a7 7 0 0 1-14 0c0-4 3-7 4-9 0 3 2 4 3 4z" fill="#ffd166"/>
       </svg>
       <span class="scene-label">Camino</span>
-      <span class="num">5</span>
     </div>
 
     <div class="scene scene-rain" data-video="x7SQaDTSrVg">
@@ -74,7 +109,6 @@
         <path d="M22 47l-3 9M33 47l-3 9M44 47l-3 9" stroke="#6fb0ff" stroke-width="4" stroke-linecap="round"/>
       </svg>
       <span class="scene-label">Pioggia</span>
-      <span class="num">6</span>
     </div>
 
     <div class="scene scene-reef" data-video="zQ8caaUxIvY">
@@ -83,7 +117,6 @@
         <circle cx="19" cy="30" r="3.5" fill="#0b0d12"/>
       </svg>
       <span class="scene-label">Acquario</span>
-      <span class="num">7</span>
     </div>
 
     <div class="scene scene-sea" data-video="WHPEKLQID4U">
@@ -92,18 +125,12 @@
         <path d="M4 26c7-7 14-7 21 0s14 7 21 0 11-6 14-6" fill="none" stroke="#8fd0ff" stroke-width="4" stroke-linecap="round"/>
       </svg>
       <span class="scene-label">Mare</span>
-      <span class="num">8</span>
     </div>
   </section>
 
   <footer class="hint">
     <span>&#9664; &#9654; &#9650; &#9660; sposta</span>
     <span>OK apri</span>
-    <span>1&ndash;8 diretto</span>
-    <span><b class="key key-red"></b> Tutte le app</span>
-    <span><b class="key key-green"></b> Sfondo</span>
-    <span><b class="key key-yellow"></b> Suoni</span>
-    <span><b class="key key-blue"></b> Home Samsung</span>
   </footer>
   <div class="toast" id="toast"></div>
 </main>

@@ -12,10 +12,10 @@ ambient scenes, and every other app one button away.
 ## What it does
 
 - **Opens on live TV.** TV channels is always selected, so pressing OK puts you straight on your channels.
-- **One press per app.** Number keys 1–4 open a tile directly.
+- **Works with any remote.** Everything is reachable with the arrows and OK, so the Smart Remote without number or colour keys is enough.
 - **Ambient scenes.** Fireplace, rain, aquarium and sea open YouTube straight on a long video. Best with YouTube Premium, so no ads.
-- **All your apps.** The red button shows every installed app in a grid.
-- **Your look.** The green button switches between 11 wallpapers, photos included.
+- **All your apps.** A button in the settings bar, top right, shows every installed app in a grid.
+- **Your look.** Another one switches between 11 wallpapers, photos included.
 - **Light and private.** No ads, no tracking; the home screen itself works offline.
 
 | Photo wallpapers and scenes | All apps |
@@ -27,12 +27,10 @@ ambient scenes, and every other app one button away.
 | Button | Action |
 | --- | --- |
 | ◀ ▶ ▲ ▼ and OK | Move and open |
-| 1 – 4 | Open that tile |
-| 5 – 8 | Open that scene |
-| 🔴 Red | All apps |
-| 🟢 Green | Next wallpaper |
-| 🟡 Yellow | Navigation sounds on/off |
-| 🔵 Blue | Samsung's own Home (settings and everything else) |
+| ▲ from the tiles | Settings bar: all apps, wallpaper, navigation sounds, Samsung's own Home |
+
+Remotes with number and colour keys get shortcuts too: 1–4 open a tile,
+5–8 a scene, and 🔴 🟢 🟡 🔵 do what the settings bar does, in that order.
 
 ## Install it on your TV
 

@@ -15,10 +15,6 @@
     <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
     <!-- Switch the picture to the TV tuner before opening live TV. -->
     <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
-    <!-- Scenes: one of the ways to open YouTube on a video is a DIAL request
-         to the TV itself (127.0.0.1). Nothing else goes online. -->
-    <tizen:privilege name="http://tizen.org/privilege/internet"/>
-    <access origin="*" subdomains="true"/>
 
     <tizen:profile name="tv-samsung"/>
     <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"/>
